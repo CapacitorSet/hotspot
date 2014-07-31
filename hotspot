@@ -268,8 +268,8 @@ else
 	show_info "Wireless Hotspot active"
 fi
 
-# Run the node.js server
-js /usr/bin/server.js
+# Run the captive portal
+# js /usr/bin/server.js
 
 }
 
