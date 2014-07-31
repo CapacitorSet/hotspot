@@ -1,4 +1,4 @@
-// Creates a
+// Creates a standalone installer.
 
 var fs = require('fs');
 
@@ -6,7 +6,8 @@ bin_64 = fs.readFileSync('hotspot').toString('base64');
 server_64 = fs.readFileSync('server.js').toString('base64');
 rmtrack_64 = fs.readFileSync('rmtrack').toString('base64');
 
-setup = 'apt-get install coreutils dnsmasq hostapd conntrack nodejs';
+setup =  '#!/bin/bash';
+setup += 'apt-get install coreutils dnsmasq hostapd conntrack nodejs';
 /* 
 	coreutils: required for base64
 	dnsmasq:   DHCP server
