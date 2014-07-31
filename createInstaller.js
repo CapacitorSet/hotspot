@@ -17,5 +17,5 @@ setup += 'apt-get install coreutils dnsmasq hostapd conntrack nodejs';
 */
 setup += 'echo "' + bin_64     + '" | base64 -d > /usr/bin/hotspot\n';
 setup += 'echo "' + server_64  + '" | base64 -d > /usr/bin/server.js'
-setup += 'echo "' + rmtrack_64 + '" | base64 -d '
+setup += 'echo "' + rmtrack_64 + '" | base64 -d > /usr/bin/rmtrack'
 fs.writeFileSync("install.sh", setup);
