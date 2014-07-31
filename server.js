@@ -20,7 +20,7 @@ profiles = JSON.parse(fs.readFileSync('profiles.json').toString("utf8"));
 http.createServer(function(request, response) {
 	var uri = url.parse(request.url).pathname,
 		ip = request.connection.remoteAddress;
-	response.writeHead(200, {"Content-Type": "text/html",
+		response.writeHead(200, {"Content-Type": "text/html",
 							"Cache-Control": "no-cache, no-store, must-revalidate",
 							"Pragma": "no-cache",
 							"Expires": 0

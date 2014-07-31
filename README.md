@@ -9,7 +9,7 @@ Installing
 To create an installer, run the following commands:
 
     sudo apt-get install nodejs
-    nodejs createinstaller.sh
+    node createinstaller.js
     
 This will create a standalone installer named `install.sh`. To install [Untitled] on a machine, copy `install.sh` to the target machine and then run
 
