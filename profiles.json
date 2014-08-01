@@ -1,4 +1,14 @@
 {
+	"whitelist": [
+		{
+			"host": "wikipedia.org",
+			"port": "80"
+		},
+		{
+			"host": "wikipedia.org",
+			"port": "443"
+		}
+	],
 	"afilini-goes-onn": [
 		{
 			"host": "the-beat-goes-onn.tumblr.com",
