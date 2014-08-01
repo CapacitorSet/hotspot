@@ -11,7 +11,7 @@ To create an installer, run the following commands:
     sudo apt-get install nodejs
     node createinstaller.js
     
->Before creating the installer, please edit `profiles.json` to ensure that the whitelist fits your needs. The `whitelist` profile contains the global whitelist, which is applied to every user. If you don't need a whitelist, simply replace the default whitelist with `"whitelist": []`.
+>Before creating the installer, please edit `profiles.json` to ensure that the whitelist and the blacklist fit your needs. The `whitelist` profile contains the global whitelist, and the `blacklist` profile contains the global blacklist, both of which are applied to every user. If you don't need them, simply replace the default whitelist with `"whitelist": []` and the default blacklist with `"blacklist": []`.
     
 This will create a standalone installer named `install.sh`. To install [Untitled] on a machine, copy `install.sh` to the target machine and then run
 

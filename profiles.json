@@ -9,6 +9,23 @@
 			"port": "443"
 		}
 	],
+	"blacklist": [
+		{
+			"host": "ad.doubleclick.net"
+		},
+		{
+			"host": "media.fastclick.net"
+		},
+		{
+			"host": "cdn.fastclick.net"
+		},
+		{
+			"host": "google-analytics.com"
+		},
+		{
+			"host": "www.google-analytics.com"
+		}
+	],
 	"afilini-goes-onn": [
 		{
 			"host": "the-beat-goes-onn.tumblr.com",
