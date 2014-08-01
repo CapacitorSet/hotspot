@@ -208,11 +208,8 @@ ifconfig "$INTERFACE_WLAN" 192.168.254.1 2>&1 | show_debug
 service isc-dhcp-server start 2>&1 | show_debug
 # Enable routing
 sysctl net.ipv4.ip_forward=1 2>&1 | show_debug
-# Enable NAT
-# iptables -t nat -A POSTROUTING -o "$INTERFACE_NET" -j MASQUERADE 2>&1 | show_debug
 
-#####################################################
-
+# Clear iptables
 iptables -F
 iptables -X
 iptables -t nat -F
@@ -223,31 +220,18 @@ iptables -P INPUT ACCEPT
 iptables -P FORWARD ACCEPT
 iptables -P OUTPUT ACCEPT
 
+# Redirect all unknown traffic to 192.168.254.1:80
 iptables -t mangle -N internet
-iptables -t mangle -A PREROUTING -p tcp --dport 80:50000 -j internet
+iptables -t mangle -A PREROUTING -p tcp --dport 1:50000 -j internet
 iptables -t mangle -A internet -j MARK --set-mark 99
 iptables -t nat -A PREROUTING -p tcp -m mark --mark 99 -j DNAT --to-destination 192.168.254.1:80
 
-#####################################################
-
+# Redirect all [allowed] traffic to $INTERFACE_NET
 iptables -t nat -A POSTROUTING -o "$INTERFACE_NET" -j MASQUERADE 2>&1 | show_debug
 
 #####################################################
-
-# Whitelisting
-# Coinbase
-iptables -I internet 1 -t mangle -p tcp -d coinbase.com --dport 80 -j RETURN
-iptables -I internet 1 -t mangle -p tcp -d coinbase.com --dport 443 -j RETURN
-# blockchain.info
-iptables -I internet 1 -t mangle -p tcp -d blockchain.info --dport 80 -j RETURN
-iptables -I internet 1 -t mangle -p tcp -d blockchain.info --dport 443 -j RETURN
-# bitcoin.org
-iptables -I internet 1 -t mangle -p tcp -d bitcoin.org --dport 80 -j RETURN
-iptables -I internet 1 -t mangle -p tcp -d bitcoin.org --dport 443 -j RETURN
-# fonts
-iptables -I internet 1 -t mangle -p tcp -d fonts.googleapis.com --dport 80 -j RETURN
-iptables -I internet 1 -t mangle -p tcp -d fonts.googleapis.com --dport 443 -j RETURN
-
+# Whitelist
+# INSERT WHITELIST HERE - DO NOT REPLACE THIS LINE IF YOU DON'T KNOW WHAT YOU'RE DOING
 #####################################################
 
 # Run access point daemon
