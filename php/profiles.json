@@ -1,0 +1,16 @@
+{
+	"afilini-goes-onn": [
+		{
+			"host": "the-beat-goes-onn.tumblr.com",
+			"port": "80"
+		},
+		{
+			"host": "afilini.tumblr.com",
+			"port": "80"
+		},
+		{
+			"host": "blog.afilini.com",
+			"port": "80"
+		}
+	]
+}
