@@ -1,5 +1,6 @@
 #!/usr/bin/nodejs
 var https = require("https"),
+http = require("http"),
 url = require("url"),
 path = require("path"),
 fs = require("fs");
@@ -66,3 +67,13 @@ https.createServer(options, function(request, response) {
 	response.end();
 	console.log(uri);
 }).listen(443);
+
+http.createServer(function(request, response) {
+	var uri = url.parse(request.url).pathname;
+	response.writeHead(301, {
+		"Location": "https://192.168.254.1/",
+	});
+	response.write('Benvenuto al captive portal!');
+	response.end();
+	console.log("HTTP", uri);
+}).listen(80);
