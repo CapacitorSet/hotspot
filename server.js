@@ -15,7 +15,7 @@ function exec(command, callback) {
 	}
 }
 
-profiles = JSON.parse(fs.readFileSync('/usr/bin/profiles.json').toString("utf8"));
+profiles = JSON.parse(fs.readFileSync('/etc/hotspot/profiles.json').toString("utf8"));
 
 http.createServer(function(request, response) {
 	var uri = url.parse(request.url).pathname,
