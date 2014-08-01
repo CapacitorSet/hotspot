@@ -1,8 +1,13 @@
 #!/usr/bin/nodejs
-var http = require("http"),
+var https = require("https"),
 url = require("url"),
 path = require("path"),
 fs = require("fs");
+
+var options = {
+  key: fs.readFileSync('server-key.pem'),
+  cert: fs.readFileSync('server-cert.pem')
+};
 
 function exec(command, callback) {
 	console.log("Executing", command)
@@ -17,7 +22,7 @@ function exec(command, callback) {
 
 profiles = JSON.parse(fs.readFileSync('/etc/hotspot/profiles.json').toString("utf8"));
 
-http.createServer(function(request, response) {
+https.createServer(options, function(request, response) {
 	var uri = url.parse(request.url).pathname,
 		ip = request.connection.remoteAddress;
 		response.writeHead(200, {
@@ -60,4 +65,4 @@ http.createServer(function(request, response) {
 	}
 	response.end();
 	console.log(uri);
-}).listen(80);
+}).listen(443);
