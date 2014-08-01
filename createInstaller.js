@@ -37,9 +37,11 @@ server_64 = fs.readFileSync('server.js').toString('base64');
 rmtrack_64 = fs.readFileSync('rmtrack').toString('base64');
 // dhcpd_64 = fs.readFileSync('dhcpd.conf').toString('base64');
 profiles_64 = fs.readFileSync('profiles.json').toString('base64');
+users_64 = fs.readFileSync('users.json').toString('base64');
 
 setup =  '#!/bin/bash\n';
 setup += 'apt-get install coreutils dnsmasq hostapd conntrack nodejs\n';
+setup += 'mkdir -p /etc/hotspot\n';
 /* 
 	coreutils: 			required for base64
 	dnsmasq: 			DHCP server
@@ -51,7 +53,8 @@ setup += 'apt-get install coreutils dnsmasq hostapd conntrack nodejs\n';
 setup += 'echo "' + hotspot_64 + '" | base64 -d | cat > /usr/bin/hotspot\n';
 setup += 'echo "' + server_64  + '" | base64 -d | cat > /usr/bin/server.js\n';
 setup += 'echo "' + rmtrack_64 + '" | base64 -d | cat > /usr/bin/rmtrack\n';
-setup += 'echo "' + profiles_64+ '" | base64 -d | cat > /usr/bin/profiles.json\n';
+setup += 'echo "' + profiles_64+ '" | base64 -d | cat > /etc/hotspot/profiles.json\n';
+setup += 'echo "' + users_64+ '" | base64 -d | cat > /etc/hotspot/users.json\n';
 setup += 'chmod +x /usr/bin/hotspot\n';
 setup += ''
 
