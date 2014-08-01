@@ -5,7 +5,14 @@ var fs = require('fs');
 whitelist = JSON.parse(fs.readFileSync('profiles.json').toString('utf8')).whitelist;
 replacement = "";
 whitelist.forEach(function (item) {
-	replacement += "iptables -I internet 1 -t mangle -p tcp -d " + item.host + " --dport " + item.port + " -j RETURN\n"
+	replacement += "iptables -I internet 1 -t mangle -p tcp ";
+	if (item.host) {
+		replacement += "-d " + item.host + " ";
+	}
+	if (item.port) {
+		replacement += "--dport " + item.port + " ";
+	}
+	replacement += "-j RETURN\n"
 });
 hotspot = fs.readFileSync('hotspot').toString('utf8').replace("# INSERT WHITELIST HERE - DO NOT REPLACE THIS LINE IF YOU DON'T KNOW WHAT YOU'RE DOING", replacement);
 
@@ -28,5 +35,6 @@ setup += 'echo "' + hotspot_64 + '" | base64 -d | cat > /usr/bin/hotspot\n';
 setup += 'echo "' + server_64  + '" | base64 -d | cat > /usr/bin/server.js\n';
 setup += 'echo "' + rmtrack_64 + '" | base64 -d | cat > /usr/bin/rmtrack\n';
 setup += 'chmod +x /usr/bin/hotspot\n';
+setup += ''
 
 fs.writeFileSync("install.sh", setup);

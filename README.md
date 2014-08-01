@@ -70,3 +70,4 @@ Using the portal
     }
     
 >The example above defines the special profile `whitelist`, representing the global whitelist (see the paragraph "Installing"), which allows connections to `wikipedia.org` on ports `80` and `443` (respectively, the default ports for http and https), and the normal profile `afilini-goes-onn`, which unlocks `the-beat-goes-onn.tumblr-com`, `afilini.tumblr.com` and `blog.afilini.com` on port `80`.
+>Note that you can specify either a host, a port, or both.
