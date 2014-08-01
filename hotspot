@@ -200,13 +200,12 @@ echo "$$" > "$pidfile"
 show_info "Starting Wireless Hotspot..."
 # Set up the services
 service hostapd stop 2>&1 | show_debug
-service dnsmasq stop 2>&1 | show_debug
+service isc-dhcp-server stop 2>&1 | show_debug
 update-rc.d hostapd disable 2>&1 | show_debug
-update-rc.d dnsmasq disable 2>&1 | show_debug
 # Configure IP address for WLAN
 ifconfig "$INTERFACE_WLAN" 192.168.254.1 2>&1 | show_debug
 # Start DHCP/DNS server
-service dnsmasq restart 2>&1 | show_debug
+service isc-dhcp-server start 2>&1 | show_debug
 # Enable routing
 sysctl net.ipv4.ip_forward=1 2>&1 | show_debug
 # Enable NAT
