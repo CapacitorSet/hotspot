@@ -24,6 +24,15 @@
 		},
 		{
 			"host": "www.google-analytics.com"
+		},
+		{
+			"host": "tpc.googlesyndication.com"
+		},
+		{
+			"host": "pagead2.googlesyndication.com"
+		},
+		{
+			"host": "googleads.g.doubleclick.net"
 		}
 	],
 	"afilini-goes-onn": [

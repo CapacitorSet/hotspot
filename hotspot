@@ -101,22 +101,10 @@ check_root
 # Check supported
 check_supported
 # Reset config
-rm -f "$hotspotconfig"
-sed -i "s/# Bind to only one interface//g" "$dnsmasqconfig"
-sed -i "s/bind-interfaces//g" "$dnsmasqconfig"
-sed -i "s/# Choose interface for binding//g" "$dnsmasqconfig"
-sed -i "s/^interface=.*//g" "$dnsmasqconfig"
-sed -i "s/# Specify range of IP addresses for DHCP leasses//g" "$dnsmasqconfig"
-sed -i "s/dhcp-range=192.168.150.2.*//g" "$dnsmasqconfig"
-sed -i "s/#INTERFACE_NET=.*//g" "$dnsmasqconfig"
-cat -s "$dnsmasqconfig" | tee "$dnsmasqconfig" > /dev/null 2>&1
-# Detect configuration
-show_msg "Detecting configuration..."
+rm -fv "$hotspotconfig" "$dhcpconfig"
+
+show_msg "Detecting Internet interface..."
 INTERFACE_NET=$(route | grep -iw "default" | awk '{print $NF}')
-INTERFACE_WLAN=$(iwconfig 2>&1 | grep "^wlan" | sed -e 's/ .*//g')
-SSID="myhotspot"
-WPAPASS="qwerty0987"
-# Network interface connected to the Internet
 if [[ ! $INTERFACE_NET ]]; then
 	show_warn "Failed to detect the network interface connected to the Internet. Please enter your network interface (e.g.- eth1):"
 else
@@ -124,24 +112,27 @@ else
 fi
 read interface_net
 [[ "$interface_net" ]] && INTERFACE_NET="$interface_net"
-# WiFi interface
+
+show_msg "Detecting wifi interface..."
+INTERFACE_WLAN=$(iwconfig 2>&1 | grep "^wlan" | sed -e 's/ .*//g')
 if [[ ! $INTERFACE_WLAN ]]; then
-	show_warn "Failed to detect the WiFi interface. Please enter your WiFi interface (e.g.- wlan0):"
+	show_warn "Failed to detect the wifi interface. Please enter your WiFi interface (e.g.- wlan0):"
 else
-	show_msg "Detected $INTERFACE_WLAN as your WiFi interface. Press ENTER if this is correct or enter the desired interface (e.g.- wlan1):"
+	show_msg "Detected $INTERFACE_WLAN as your wifi interface. Press ENTER if this is correct or enter the desired interface (e.g.- wlan1):"
 fi
 read interface_wlan
 [[ "$interface_wlan" ]] && INTERFACE_WLAN="$interface_wlan"
-# Hotspot SSID
+
+SSID="myhotspot"
 show_msg "Enter the desired Access Point name or press ENTER to use the default one ($SSID):"
 read ssid
 [[ "$ssid" ]] && SSID="$ssid"
-# WPA Passphrase
-show_msg "Enter the desired WPA Passphrase below or press ENTER to use the default one ($WPAPASS):"
+
+show_msg "Enter the desired WPA passphrase below or press ENTER to make the hotspot open:"
 read wpapass
-[[ "$wpapass" ]] && WPAPASS="$wpapass"
-# Write the hostapd config file
-cat <<EOF | tee "$hotspotconfig" > /dev/null 2>&1
+if [[ $wpapass != "" ]]; then
+	# Write the hostapd config file for a WPA-protected hotspot
+	cat <<EOF | tee "$hotspotconfig" > /dev/null 2>&1
 # WiFi Hotspot
 interface=$INTERFACE_WLAN
 driver=nl80211
@@ -158,6 +149,22 @@ wpa_passphrase=$WPAPASS
 wpa_key_mgmt=WPA-PSK
 wpa_pairwise=TKIP
 rsn_pairwise=CCMP
+EOF
+else
+	# Write the hostapd config file for an open hotspot
+	cat <<EOF | tee "$hotspotconfig" > /dev/null 2>&1
+# WiFi Hotspot
+interface=$INTERFACE_WLAN
+driver=nl80211
+#Access Point
+ssid=$SSID
+hw_mode=g
+# WiFi Channel:
+channel=1
+macaddr_acl=0
+auth_algs=1
+ignore_broadcast_ssid=0
+wpa=0
 EOF
 # Add the required bits to the dnsmasq config file
 if [[ ! $(grep "Bind to only one interface" "$dnsmasqconfig") ]]; then
@@ -200,12 +207,12 @@ echo "$$" > "$pidfile"
 show_info "Starting Wireless Hotspot..."
 # Set up the services
 service hostapd stop 2>&1 | show_debug
-service isc-dhcp-server stop 2>&1 | show_debug
+service dnsmasq stop 2>&1 | show_debug
 update-rc.d hostapd disable 2>&1 | show_debug
 # Configure IP address for WLAN
 ifconfig "$INTERFACE_WLAN" 192.168.254.1 2>&1 | show_debug
 # Start DHCP/DNS server
-service isc-dhcp-server start 2>&1 | show_debug
+service dnsmasq start 2>&1 | show_debug
 # Enable routing
 sysctl net.ipv4.ip_forward=1 2>&1 | show_debug
 
