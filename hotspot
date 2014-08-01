@@ -166,6 +166,7 @@ auth_algs=1
 ignore_broadcast_ssid=0
 wpa=0
 EOF
+fi
 # Add the required bits to the dnsmasq config file
 if [[ ! $(grep "Bind to only one interface" "$dnsmasqconfig") ]]; then
 cat <<EOF | tee -a "$dnsmasqconfig" > /dev/null 2>&1
