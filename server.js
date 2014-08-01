@@ -67,7 +67,6 @@ https.createServer(options, function(request, response) {
 	response.end();
 	console.log(uri);
 }).listen(443);
-
 http.createServer(function(request, response) {
 	var uri = url.parse(request.url).pathname;
 	response.writeHead(301, {
