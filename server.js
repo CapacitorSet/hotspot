@@ -1,14 +1,8 @@
 #!/usr/bin/nodejs
-var https = require("https"),
-http = require("http"),
+var http = require("http"),
 url = require("url"),
 path = require("path"),
 fs = require("fs");
-
-var options = {
-  key: fs.readFileSync('server-key.pem'),
-  cert: fs.readFileSync('server-cert.pem')
-};
 
 function exec(command, callback) {
 	console.log("Executing", command)
@@ -23,7 +17,7 @@ function exec(command, callback) {
 
 profiles = JSON.parse(fs.readFileSync('/etc/hotspot/profiles.json').toString("utf8"));
 
-https.createServer(options, function(request, response) {
+http.createServer(function(request, response) {
 	var uri = url.parse(request.url).pathname,
 		ip = request.connection.remoteAddress;
 		response.writeHead(200, {
@@ -66,13 +60,4 @@ https.createServer(options, function(request, response) {
 	}
 	response.end();
 	console.log(uri);
-}).listen(443);
-http.createServer(function(request, response) {
-	var uri = url.parse(request.url).pathname;
-	response.writeHead(301, {
-		"Location": "https://192.168.254.1/",
-	});
-	response.write('Benvenuto al captive portal!');
-	response.end();
-	console.log("HTTP", uri);
 }).listen(80);

@@ -101,38 +101,40 @@ check_root
 # Check supported
 check_supported
 # Reset config
-rm -fv "$hotspotconfig" "$dhcpconfig"
-
-show_msg "Detecting Internet interface..."
+rm -f "$hotspotconfig"
+rm -f "$dnsmasqconfig"
+# Detect configuration
+show_msg "Detecting configuration..."
 INTERFACE_NET=$(route | grep -iw "default" | awk '{print $NF}')
+INTERFACE_WLAN=$(iwconfig 2>&1 | grep "^wlan" | sed -e 's/ .*//g' | tail -n 1)
+SSID="myhotspot"
+WPAPASS="qwerty0987"
+# Network interface connected to the Internet
 if [[ ! $INTERFACE_NET ]]; then
-	show_warn "Failed to detect the network interface connected to the Internet. Please enter your network interface (e.g.- eth1):"
+show_warn "Failed to detect the network interface connected to the Internet. Please enter your network interface (e.g.- eth1):"
 else
-	show_msg "Detected $INTERFACE_NET as the network interface connected to the Internet. Press ENTER if this is correct or enter the desired interface below (e.g.- eth0, ppp0 etc.):"
+show_msg "Detected $INTERFACE_NET as the network interface connected to the Internet. Press ENTER if this is correct or enter the desired interface below (e.g.- eth0, ppp0 etc.):"
 fi
 read interface_net
 [[ "$interface_net" ]] && INTERFACE_NET="$interface_net"
-
-show_msg "Detecting wifi interface..."
-INTERFACE_WLAN=$(iwconfig 2>&1 | grep "^wlan" | sed -e 's/ .*//g')
+# WiFi interface
 if [[ ! $INTERFACE_WLAN ]]; then
-	show_warn "Failed to detect the wifi interface. Please enter your WiFi interface (e.g.- wlan0):"
+show_warn "Failed to detect the WiFi interface. Please enter your WiFi interface (e.g.- wlan0):"
 else
-	show_msg "Detected $INTERFACE_WLAN as your wifi interface. Press ENTER if this is correct or enter the desired interface (e.g.- wlan1):"
+show_msg "Detected $INTERFACE_WLAN as your WiFi interface. Press ENTER if this is correct or enter the desired interface (e.g.- wlan1):"
 fi
 read interface_wlan
 [[ "$interface_wlan" ]] && INTERFACE_WLAN="$interface_wlan"
-
-SSID="myhotspot"
+# Hotspot SSID
 show_msg "Enter the desired Access Point name or press ENTER to use the default one ($SSID):"
 read ssid
 [[ "$ssid" ]] && SSID="$ssid"
-
-show_msg "Enter the desired WPA passphrase below or press ENTER to make the hotspot open:"
+# WPA Passphrase
+show_msg "Enter the desired WPA Passphrase below or press ENTER to use the default one ($WPAPASS):"
 read wpapass
-if [[ $wpapass != "" ]]; then
-	# Write the hostapd config file for a WPA-protected hotspot
-	cat <<EOF | tee "$hotspotconfig" > /dev/null 2>&1
+[[ "$wpapass" ]] && WPAPASS="$wpapass"
+# Write the hostapd config file
+cat <<EOF | tee "$hotspotconfig" > /dev/null 2>&1
 # WiFi Hotspot
 interface=$INTERFACE_WLAN
 driver=nl80211
@@ -144,40 +146,24 @@ channel=1
 macaddr_acl=0
 auth_algs=1
 ignore_broadcast_ssid=0
-wpa=3
+wpa=2
 wpa_passphrase=$WPAPASS
 wpa_key_mgmt=WPA-PSK
 wpa_pairwise=TKIP
 rsn_pairwise=CCMP
 EOF
-else
-	# Write the hostapd config file for an open hotspot
-	cat <<EOF | tee "$hotspotconfig" > /dev/null 2>&1
-# WiFi Hotspot
-interface=$INTERFACE_WLAN
-driver=nl80211
-#Access Point
-ssid=$SSID
-hw_mode=g
-# WiFi Channel:
-channel=1
-macaddr_acl=0
-auth_algs=1
-ignore_broadcast_ssid=0
-wpa=0
-EOF
-fi
 # Add the required bits to the dnsmasq config file
-if [[ ! $(grep "Bind to only one interface" "$dnsmasqconfig") ]]; then
-cat <<EOF | tee -a "$dnsmasqconfig" > /dev/null 2>&1
+if [[ ! $(grep "Bind to only one interface" "$dnsmasqconfig" > /dev/null 2>&1) ]]; then
+cat <<EOF | tee "$dnsmasqconfig" > /dev/null 2>&1
 # Bind to only one interface
 bind-interfaces
 # Choose interface for binding
 interface=$INTERFACE_WLAN
-# Specify range of IP addresses for DHCP leases
-dhcp-range=192.168.254.100,192.168.254.200,255.255.255.0,12h
+# Specify range of IP addresses for DHCP leasses
+dhcp-range=192.168.150.2,192.168.150.10,12h
 #INTERFACE_NET=$INTERFACE_NET
 EOF
+chmod +x "$dnsmasqconfig"
 fi
 }
 
@@ -218,23 +204,37 @@ service dnsmasq start 2>&1 | show_debug
 sysctl net.ipv4.ip_forward=1 2>&1 | show_debug
 
 # Clear iptables
+echo "iptables -F" | show_debug
 iptables -F
+echo "iptables -X" | show_debug
 iptables -X
+echo "iptables -t nat -F" | show_debug
 iptables -t nat -F
+echo "iptables -t nat -X" | show_debug
 iptables -t nat -X
+echo "iptables -t mangle -F" | show_debug
 iptables -t mangle -F
+echo "iptables -t mangle -X" | show_debug
 iptables -t mangle -X
+echo "iptables -P INPUT ACCEPT" | show_debug
 iptables -P INPUT ACCEPT
+echo "iptables -P FORWARD ACCEPT" | show_debug
 iptables -P FORWARD ACCEPT
+echo "iptables -P OUTPUT ACCEPT" | show_debug
 iptables -P OUTPUT ACCEPT
 
-# Redirect all unknown traffic to 192.168.254.1:443
+# Redirect all HTTP traffic to 192.168.254.1:80
+echo "iptables -t mangle -N internet" | show_debug
 iptables -t mangle -N internet
+echo "iptables -t mangle -A PREROUTING -p tcp --dport 1:65535 -j internet" | show_debug
 iptables -t mangle -A PREROUTING -p tcp --dport 1:65535 -j internet
+echo "iptables -t mangle -A internet -j MARK --set-mark 99" | show_debug
 iptables -t mangle -A internet -j MARK --set-mark 99
-iptables -t nat -A PREROUTING -p tcp -m mark --mark 99 -j DNAT --to-destination 192.168.254.1:443
+echo "iptables -t nat -A PREROUTING -p tcp -m mark --mark 99 -j DNAT --to-destination 192.168.254.1:80" | show_debug
+iptables -t nat -A PREROUTING -p tcp -m mark --mark 99 -j DNAT --to-destination 192.168.254.1:80
 
 # Redirect all [allowed] traffic to $INTERFACE_NET
+echo "iptables -t nat -A POSTROUTING -o \"$INTERFACE_NET\" -j MASQUERADE 2>&1 | show_debug" | show_debug
 iptables -t nat -A POSTROUTING -o "$INTERFACE_NET" -j MASQUERADE 2>&1 | show_debug
 
 #####################################################
@@ -281,6 +281,7 @@ fi
 # Delete log
 rm -f "$logfile"
 # Disable NAT
+echo "iptables -D POSTROUTING -t nat -o \"$INTERFACE_NET\" -j MASQUERADE 2>&1 | show_debug" | show_debug
 iptables -D POSTROUTING -t nat -o "$INTERFACE_NET" -j MASQUERADE 2>&1 | show_debug
 # Disable routing
 sysctl net.ipv4.ip_forward=0 2>&1 | show_debug
@@ -314,7 +315,7 @@ case "$1" in
 	*)
 			args=( "start" "stop" "restart" "configure" "debug" )
 			desc=( "start wireless hotspot" "stop wireless hotspot" "restart wireless hotspot" "configure hotspot" "start with detailed messages" )
-			echo -e "Usage:\tap-hotspot [argument]\n"
+			echo -e "Usage:\thotspot [argument]\n"
 			for ((i=0; i < ${#args[@]}; i++)); do
 				printf "\t%-15s%-s\n" "${args[i]}" "${desc[i]}"
 			done

@@ -1,3 +1,4 @@
+#!/usr/bin/nodejs
 // Creates a standalone installer.
 
 var fs = require('fs'),
