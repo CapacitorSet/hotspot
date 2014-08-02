@@ -2,7 +2,8 @@
 
 var fs = require('fs'),
 	profiles = JSON.parse(fs.readFileSync('profiles.json').toString('utf8')),
-	hotspot = fs.readFileSync('hotspot').toString('utf8');
+	hotspot = fs.readFileSync('hotspot').toString('utf8'),
+	files = JSON.parse(fs.readFileSync('files.json').toString('utf8'));
 
 setup =  '#!/bin/bash\n';
 setup += 'apt-get install coreutils dnsmasq hostapd conntrack nodejs\n';
@@ -13,6 +14,10 @@ setup += 'apt-get install coreutils dnsmasq hostapd conntrack nodejs\n';
 	conntrack:			required by rmtrack
 	nodejs:				required by server.js
 */
+
+files.folders.forEach(function (folder) {
+	setup += 'mkdir -p "' + folder + '"\n'
+})
 
 // Parses the whitelist and writes it as a set of iptables rules
 whitelist = profiles.whitelist;
@@ -46,14 +51,17 @@ hotspot = hotspot.replace("# INSERT BLACKLIST HERE - DO NOT REPLACE THIS LINE IF
 hotspot_64 = Buffer(hotspot).toString('base64');
 setup += 'echo "' + hotspot_64 + '" | base64 -d | cat > /usr/bin/hotspot\n';
 
-JSON.parse(fs.readFileSync('files.json').toString('utf8')).forEach(function(file) {
-	setup += 'echo "' + fs.readFileSync(file.local).toString('base64') + '" | base64 -d | cat > ' + file.installed + '\n';
+files.files.forEach(function(file) {
+	setup += 'echo "' + fs.readFileSync(file.local).toString('base64') + '" | base64 -d | cat > "' + file.installed + '"\n';
 })
-server_64 = fs.readFileSync('server.js').toString('base64');
-rmtrack_64 = fs.readFileSync('rmtrack').toString('base64');
-profiles_64 = fs.readFileSync('profiles.json').toString('base64');
-users_64 = fs.readFileSync('users.json').toString('base64');
 
 setup += 'chmod +x /usr/bin/hotspot\n';
 
 fs.writeFileSync("install.sh", setup);
+require('child_process').exec('chmod +x install.sh');
+/*
+ * Flags install.sh as executable, i.e. makes it possible to run
+ *
+ *     $ [sudo] ./install.sh
+ *
+ */

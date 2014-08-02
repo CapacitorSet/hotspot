@@ -1,22 +1,28 @@
-[
-	{
-		"local": "createUser.js",
-		"installed": "/usr/bin/createUser.js"
-	},
-	{
-		"local": "rmtrack",
-		"installed": "/usr/bin/rmtrack"
-	},
-	{
-		"local": "server.js",
-		"installed": "/usr/bin/server.js"
-	},
-	{
-		"local": "profiles.json",
-		"installed": "/etc/hotspot/profiles.json"
-	},
-	{
-		"local": "users.json",
-		"installed": "/etc/hotspot/users.json"
-	}
-]
+{
+	"files": [
+		{
+			"local": "createUser.js",
+			"installed": "/usr/bin/createUser.js"
+		},
+		{
+			"local": "rmtrack",
+			"installed": "/usr/bin/rmtrack"
+		},
+		{
+			"local": "server.js",
+			"installed": "/usr/bin/server.js"
+		},
+		{
+			"local": "profiles.json",
+			"installed": "/etc/hotspot/profiles.json"
+		},
+		{
+			"local": "users.json",
+			"installed": "/etc/hotspot/users.json"
+		}
+	],
+	"folders": [
+		"/usr/bin",
+		"/etc/hotspot"
+	]
+}
