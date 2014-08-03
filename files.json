@@ -3,7 +3,7 @@
 		{
 			"local": "issueToken.js",
 			"installed": "/usr/bin/issueToken.js"
-		}
+		},
 		{
 			"local": "rmtrack",
 			"installed": "/usr/bin/rmtrack"
