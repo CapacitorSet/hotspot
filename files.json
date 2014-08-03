@@ -1,8 +1,8 @@
 {
 	"files": [
 		{
-			"local": "createUser.js",
-			"installed": "/usr/bin/createUser.js"
+			"local": "createToken.js",
+			"installed": "/usr/bin/createToken.js"
 		},
 		{
 			"local": "rmtrack",
@@ -23,6 +23,6 @@
 	],
 	"folders": [
 		"/usr/bin",
-		"/etc/hotspot"
+		"/etc/hotspot/tokens/"
 	]
 }
