@@ -2,7 +2,7 @@
 
 var tokens = require('/etc/hotspot/lib/tokens');
 
-minutes = process.argv[2] || 1440; // Default: 1 day
-profile = process.argv[3];
+profile = process.argv[2];
+minutes = process.argv[3] || 1440; // Default: 1 day
 
 tokens.IssueToken(minutes, profile);
