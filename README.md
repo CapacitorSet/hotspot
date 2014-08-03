@@ -71,3 +71,22 @@ Using the portal
     
 >The example above defines the special profile `whitelist`, representing the global whitelist (see the paragraph "Installing"), which allows connections to `wikipedia.org` on ports `80` and `443` (respectively, the default ports for http and https), and the normal profile `afilini-goes-onn`, which unlocks `the-beat-goes-onn.tumblr-com`, `afilini.tumblr.com` and `blog.afilini.com` on port `80`.
 >Note that you can specify either a host, a port, or both.
+
+Issuing tokens
+==============
+
+[Untitled] works using tokens: on connecting, users enter a code, which corresponds to a server-side token. The token allows them to use preset profiles, for a preset duration since they entered the code.    
+To issue a token, run:
+
+    sudo ./issueToken.js <profile> [<duration>]
+
+>The square brackets around `<duration>` mean the duration can be omitted.
+>Note that although "infinite-lasting" tokens are supported, they haven't been tested yet.
+
+The program will output something like this:
+
+    Code: ielghmlb
+    Profile: afilini-goes-onn
+    Valid for 1440 minutes (24 hours, 1 days)
+
+This means the user will need to enter the code `ielghmlb` in the captive portal. Upon doing so, the profile `afilini-goes-onn` will be unlocked for 24 hours.

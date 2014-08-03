@@ -1,2 +1,0 @@
-*IMPORTANT*
-Add "www-data ALL=NOPASSWD:ALL" to sudoers file (/etc/sudoers)

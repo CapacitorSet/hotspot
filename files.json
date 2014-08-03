@@ -1,9 +1,9 @@
 {
 	"files": [
 		{
-			"local": "createToken.js",
-			"installed": "/usr/bin/createToken.js"
-		},
+			"local": "issueToken.js",
+			"installed": "/usr/bin/issueToken.js"
+		}
 		{
 			"local": "rmtrack",
 			"installed": "/usr/bin/rmtrack"
@@ -19,10 +19,19 @@
 		{
 			"local": "users.json",
 			"installed": "/etc/hotspot/users.json"
+		},
+		{
+			"local": "tokens.js",
+			"installed": "/etc/hotspot/lib/tokens.js"
+		},
+		{
+			"local": "profiles.js",
+			"installed": "/etc/hotspot/lib/profiles.js"
 		}
 	],
 	"folders": [
 		"/usr/bin",
-		"/etc/hotspot/tokens/"
+		"/etc/hotspot/tokens/",
+		"/etc/hotspot/lib/"
 	]
 }
