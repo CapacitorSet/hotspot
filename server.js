@@ -22,12 +22,9 @@ function exec(command, sudo, callback) {
 }
 
 function GetClientData(request, callback) {
-	console.log('Client data asked for')
 	// Gets the IP and the MAC of a client
 	var IP = request.connection.remoteAddress;
-	console.log('IP gotten')
 	exec("arp -an " + IP, true, function(error, stdout, stderr) {
-		console.log('MAC gotten')
 		// At some point in the output the MAC will appear as eg. 01:23:45:67:89:ab
 		MAC = stdout.match(/..:..:..:..:..:../);
 		callback({ "IP": IP, "MAC": MAC });
@@ -115,27 +112,17 @@ function GetPOSTData(request, callback) {
 
 function ServeUnlocker(request, response) {
 	// Parse POST data. http://stackoverflow.com/a/4310087/1541408
-	console.log('Serving the unlocker');
 	if (request.method == 'POST') {
-		console.log('The method is correct! Waiting to receive POST data.');
 		GetPOSTData(request, function (POST) {
 			code = POST.code;
-			console.log('POST data received:', POST);
-			console.log('Waiting to read the token with code',code);
 			tokens.ReadToken(code, function(err, tokenData) {
-				console.log('Token read! Parameters:',err,tokenData);
 				if (err) {
 					response.end("Si &egrave; verificato un errore!");
 				} else {
-					console.log('Destroying the token')
 					tokens.DestroyToken(code);
-					console.log('Token destroyed! Waiting to get client data')
 					GetClientData(request, function(clientData) {
-						console.log('Client data gotten:',clientData);
 						minutes = tokenData.minutes;
-						console.log('Unlocking profile from token');
 						UnlockProfileFromToken(tokenData, clientData.IP, clientData.MAC);
-						console.log('Unlocked');
 						today = new Date();
 						response.end("Ora puoi navigare per " + minutes + " minuti (fino a " + Date(today.getTime()+minutes * 1440) + ")!");
 					});

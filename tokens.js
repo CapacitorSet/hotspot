@@ -49,7 +49,6 @@ function IssueToken(minutes, profile) {
 		if (err) {
 			console.log("Unable to write to file:", err);
 		} else {
-			console.log('Data written successfully!');
 			console.log('Code:', code);
 			if (profile) { console.log('Profile:', profile); }
 			console.log('Valid for', minutes, 'minutes (' + minutes/60, 'hours,', minutes/1440, 'days)');
