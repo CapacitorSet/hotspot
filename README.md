@@ -13,11 +13,19 @@ To create an installer, run the following commands:
     
 >Before creating the installer, please edit `profiles.json` to ensure that the whitelist and the blacklist fit your needs. The `whitelist` profile contains the global whitelist, and the `blacklist` profile contains the global blacklist, both of which are applied to every user. If you don't need them, simply replace the default whitelist with `"whitelist": []` and the default blacklist with `"blacklist": []`.
     
-This will create a standalone installer named `install.sh`. To install [Untitled] on a machine, copy `install.sh` to the target machine and then run
+This will create a standalone installer named `install.sh`, and an uninstaller named `uninstall.sh`. To install [Untitled] on a machine, copy `install.sh` to the target machine and then run
 
     sudo bash install.sh
     
 >Superuser privileges are needed in order to install packages and to create files in `/usr/bin`.
+
+Uninstalling
+============
+
+The uninstaller, `uninstall.sh` is created along with the installer. To uninstall [Untitled], simply copy `uninstall.sh` to the device and execute it:
+
+    sudo bash uninstall.sh
+    
 
 Using the hotspot
 =================
