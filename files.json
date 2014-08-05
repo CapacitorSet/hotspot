@@ -1,0 +1,32 @@
+{
+	"packages": [
+		"coreutils",
+		"dnsmasq",
+		"hostapd",
+		"conntrack",
+		"nodejs"
+	],
+	"comment": "Don't forget the trailing slash after directory names!",
+	"folders": {
+		"/usr/bin/": [
+			"server.js",
+			"issueToken.js",
+			"rmtrack"
+		],
+		"/etc/hotspot/": [
+			"profiles.json",
+			"users.json"
+		],
+		"/etc/hotspot/libs/": [
+			"profiles.js",
+			"tokens.js"
+		],
+		"/etc/hotspot/html/": [
+			"blocked.htm",
+			"error.htm",
+			"unlocked.htm",
+			"welcome.htm",
+			"wrongCode.htm"
+		]
+	}
+}

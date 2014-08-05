@@ -22,13 +22,6 @@ files.packages.forEach(function (package) {
 	setup += package + ' ';
 });
 setup += '\n';
-/* 
-	coreutils: 			required for base64
-	dnsmasq: 			DHCP server
-	hostapd:			wireless utility
-	conntrack:			required by rmtrack
-	nodejs:				required by server.js
-*/
 
 // Parses the whitelist and writes it as a set of iptables rules
 whitelist = profiles.whitelist;
