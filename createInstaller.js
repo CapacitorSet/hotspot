@@ -6,8 +6,22 @@ var fs = require('fs'),
 	hotspot = fs.readFileSync('hotspot').toString('utf8'),
 	files = JSON.parse(fs.readFileSync('files.json').toString('utf8'));
 
+function LoopThroughObject(object, callback) {
+	// http://stackoverflow.com/a/684692/1541408
+
+	for (var key in object) {
+		if (object.hasOwnProperty(key)) {
+			callback(key, object[key]);
+		}
+	}
+}
+
 setup =  '#!/bin/bash\n';
-setup += 'apt-get install coreutils dnsmasq hostapd conntrack nodejs\n';
+setup += 'apt-get install ';
+files.packages.forEach(function (package) {
+	setup += package + ' ';
+});
+setup += '\n';
 /* 
 	coreutils: 			required for base64
 	dnsmasq: 			DHCP server
@@ -15,10 +29,6 @@ setup += 'apt-get install coreutils dnsmasq hostapd conntrack nodejs\n';
 	conntrack:			required by rmtrack
 	nodejs:				required by server.js
 */
-
-files.folders.forEach(function (folder) {
-	setup += 'mkdir -p "' + folder + '"\n'
-})
 
 // Parses the whitelist and writes it as a set of iptables rules
 whitelist = profiles.whitelist;
@@ -52,9 +62,12 @@ hotspot = hotspot.replace("# INSERT BLACKLIST HERE - DO NOT REPLACE THIS LINE IF
 hotspot_64 = Buffer(hotspot).toString('base64');
 setup += 'echo "' + hotspot_64 + '" | base64 -d | cat > /usr/bin/hotspot\n';
 
-files.files.forEach(function(file) {
-	setup += 'echo "' + fs.readFileSync(file.local).toString('base64') + '" | base64 -d | cat > "' + file.installed + '"\n';
-})
+LoopThroughObject(files.folders, function (folder, fileList) {
+	setup += 'mkdir -p "' + folder + '"\n';
+	fileList.forEach(function (filename) {
+		setup += 'echo "' + fs.readFileSync(filename).toString('base64') + '" | base64 -d | cat > "' + folder + filename + '"\n';
+	})
+});
 
 setup += 'chmod +x /usr/bin/hotspot\n';
 
@@ -66,3 +79,17 @@ require('child_process').exec('chmod +x install.sh');
  *     $ [sudo] ./install.sh
  *
  */
+
+uninstall = '#!/bin/bash\n';
+uninstall += 'hotspot stop'; // Restores the previous state of iptables and interfaces
+uninstall += 'apt-mark auto ';
+files.packages.forEach(function (package) {
+	uninstall += package + ' ';
+});
+uninstall += '\n';
+uninstall += 'apt-get autoremove\n';
+LoopThroughObject(files.folders, function (folder) {
+	setup += 'rm -rfv "' + folder + '"\n';
+});
+fs.writeFileSync("uninstall.sh", uninstall);
+require('child_process').exec('chmod +x uninstall.sh');

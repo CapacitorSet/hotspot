@@ -1,4 +1,5 @@
 .DS_Store
 thumbs.db
 install.sh
+uninstall.sh
 npm-debug.log

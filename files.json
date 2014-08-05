@@ -1,37 +1,32 @@
 {
-	"files": [
-		{
-			"local": "issueToken.js",
-			"installed": "/usr/bin/issueToken.js"
-		},
-		{
-			"local": "rmtrack",
-			"installed": "/usr/bin/rmtrack"
-		},
-		{
-			"local": "server.js",
-			"installed": "/usr/bin/server.js"
-		},
-		{
-			"local": "profiles.json",
-			"installed": "/etc/hotspot/profiles.json"
-		},
-		{
-			"local": "users.json",
-			"installed": "/etc/hotspot/users.json"
-		},
-		{
-			"local": "tokens.js",
-			"installed": "/etc/hotspot/lib/tokens.js"
-		},
-		{
-			"local": "profiles.js",
-			"installed": "/etc/hotspot/lib/profiles.js"
-		}
+	"packages": [
+		"coreutils",
+		"dnsmasq",
+		"hostapd",
+		"conntrack",
+		"nodejs"
 	],
-	"folders": [
-		"/usr/bin",
-		"/etc/hotspot/tokens/",
-		"/etc/hotspot/lib/"
-	]
+	"comment": "Don't forget to add a trailing slash after directory names!",
+	"folders": {
+		"/usr/bin/": [
+			"issueToken.js",
+			"rmtrack",
+			"server.js"
+		],
+		"/etc/hotspot/": [
+			"profiles.json",
+			"users.json"
+		],
+		"/etc/hotspot/lib/": [
+			"tokens.js",
+			"profiles.js"
+		],
+		"/etc/hotspot/html/": [
+			"blocked.htm",
+			"welcome.htm",
+			"unlocked.htm",
+			"wrongCode.htm",
+			"error.htm"
+		]
+	}
 }
