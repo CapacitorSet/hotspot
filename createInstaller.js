@@ -74,7 +74,7 @@ require('child_process').exec('chmod +x install.sh');
  */
 
 uninstall = '#!/bin/bash\n';
-uninstall += 'hotspot stop'; // Restores the previous state of iptables and interfaces
+uninstall += 'hotspot stop\n'; // Restores the previous state of iptables and interfaces
 uninstall += 'apt-mark auto ';
 files.packages.forEach(function (package) {
 	uninstall += package + ' ';
