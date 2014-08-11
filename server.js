@@ -2,7 +2,7 @@
 // The line above tells something in Linux (I think bash but idk) that when you run "./server.js", it shuld use "/usr/bin/nodejs ./server.js".
 // Note that /usr/bin/nodejs is a longer form for "nodejs", generally: "nodejs server.js" and "/usr/bin/nodejs server.js" do the same thing.
 
-"use strict"; // This tells the engine to whine when it usually wouldn't
+// "use strict"; // This tells the engine to whine when it usually wouldn't
 
 var http   = require("http"),
 	url    = require("url"),
