@@ -53,12 +53,12 @@ blacklist.forEach(function (item) {
 });
 hotspot = hotspot.replace("# INSERT BLACKLIST HERE - DO NOT REPLACE THIS LINE IF YOU DON'T KNOW WHAT YOU'RE DOING", replacement);
 hotspot_64 = Buffer(hotspot).toString('base64');
-setup += 'echo "' + hotspot_64 + '" | base64 -d | cat > /usr/bin/hotspot\n';
+setup += 'echo "' + hotspot_64 + '" | base64 --decode | cat > /usr/bin/hotspot\n';
 
 LoopThroughObject(files.folders, function (folder, fileList) {
 	setup += 'mkdir -p "' + folder + '"\n';
 	fileList.forEach(function (filename) {
-		setup += 'echo "' + fs.readFileSync(filename).toString('base64') + '" | base64 -d | cat > "' + folder + filename + '"\n';
+		setup += 'echo "' + fs.readFileSync(filename).toString('base64') + '" | base64 --decode | cat > "' + folder + filename + '"\n';
 	})
 });
 
