@@ -6,7 +6,10 @@
 		"conntrack",
 		"nodejs"
 	],
-	"comment": "Don't forget the trailing slash after directory names!",
+	"comments": [
+		"Don't forget the trailing slash after directory names!",
+		"Libraries are to be stored in 'libs', not in 'lib'!"
+	],
 	"folders": {
 		"/usr/bin/": [
 			"server.js",
@@ -17,7 +20,7 @@
 			"profiles.json",
 			"users.json"
 		],
-		"/etc/hotspot/libs/": [
+		"/etc/hotspot/lib/": [
 			"profiles.js",
 			"tokens.js"
 		],
