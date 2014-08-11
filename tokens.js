@@ -1,5 +1,6 @@
 var fs     = require('fs'),
-	crypto = require('crypto');
+	crypto = require('crypto'),
+	profiles = require('/etc/hotspot/lib/profiles.js');
 function GetFilenameFromToken(token) {
 	/* Returns the hex-formatted sha256 hash of the token.
 	 *
@@ -36,6 +37,12 @@ function DestroyToken(token) {
 	fs.unlink(GetPathFromToken(token));
 }
 
+function RevokeToken(token) {
+	returnVal = DestroyToken(token);
+	console.log("Token revoked!");
+	return returnVal;
+}
+
 function IssueToken(minutes, profile) {
 	code = generate(8);
 	path = GetPathFromToken(code);
@@ -44,6 +51,12 @@ function IssueToken(minutes, profile) {
 		"minutes": minutes,
 		"profile": profile
 	};
+
+	if (typeof profiles.GetProfile(profile) == 'undefined') {
+		returnVal = -1;
+	} else {
+		returnVal = 0;
+	}
 
 	fs.writeFile(path, WriteTokenData(contents), { encoding: 'utf8' }, function(err){
 		if (err) {
@@ -54,6 +67,7 @@ function IssueToken(minutes, profile) {
 			console.log('Valid for', minutes, 'minutes (' + minutes/60, 'hours,', minutes/1440, 'days)');
 		}
 	});
+	return returnVal;
 }
 
 function generate(length) {

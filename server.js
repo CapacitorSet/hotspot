@@ -125,8 +125,12 @@ function UnlockProfileFromToken(tokenData, IP, MAC) {
 	// Unlocks a profile according to the token data given
 
 	profile = profiles.GetProfile(tokenData.profile);
+	if (typeof profile == 'undefined') {
+		return -1;
+	}
 	// Fetches profile data using profiles.GetProfile
 	UnlockProfile(profile, IP, MAC, tokenData.minutes);
+	return 0;
 }
 
 function GetPOSTData(request, callback) {
@@ -197,8 +201,12 @@ function ServeUnlocker(response, request) {
 					GetClientData(request, function(clientData) {
 						// The function GetClientData returns the object clientData, which contains clientData.IP and clientData.MAC.
 						minutes = tokenData.minutes;
-						UnlockProfileFromToken(tokenData, clientData.IP, clientData.MAC);
-						ServeUnlocked(response, tokenData);
+						result  = UnlockProfileFromToken(tokenData, clientData.IP, clientData.MAC);
+						if (result == -1) {
+							ServeError(response, request);
+						} else {
+							ServeUnlocked(response, tokenData);
+						}
 					});
 				}
 			});
