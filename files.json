@@ -30,6 +30,7 @@
 			"unlocked.htm",
 			"welcome.htm",
 			"wrongCode.htm"
-		]
+		],
+		"/etc/hotspot/tokens/": []
 	}
 }
