@@ -33,7 +33,7 @@ function ReadToken(token, callback) {
 }
 
 function DestroyToken(token) {
-	fs.unlink(GetPathFromToken(code));
+	fs.unlink(GetPathFromToken(token));
 }
 
 function IssueToken(minutes, profile) {
