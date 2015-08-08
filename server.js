@@ -277,7 +277,12 @@ function ServeBlocked(response, request) {
 	// Serves a "this page is blocked!" page
 
 	console.log('Intercettata richiesta a ' + request.headers.host);
-	response.end(page.blocked); // Sends the content of page.blocked to the user.
+	if (fullAccess) {
+		response.writeHead(302, {'Location: http://192.168.254.1'});
+		response.end();
+	} else {
+		response.end(page.blocked); // Sends the content of page.blocked to the user.
+	}
 	// Remember what page.blocked is?
 	// We wrote it at the top of the file: it contains the file /etc/hotspot/html/blocked.htm.
 }
