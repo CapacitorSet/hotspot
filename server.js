@@ -128,11 +128,11 @@ function UnlockProfileFromToken(tokenData, IP, MAC) {
 
 	profile = profiles.GetProfile(tokenData.profile);
 	if (typeof profile == 'undefined') {
-		return -1;
+		return false;
 	}
 	// Fetches profile data using profiles.GetProfile
 	UnlockProfile(profile, IP, MAC, tokenData.minutes);
-	return 0;
+	return true;
 }
 
 function UnlockFullAccess(IP, MAC) {
@@ -227,7 +227,7 @@ function ServeUnlocker(response, request) {
 						// The function GetClientData returns the object clientData, which contains clientData.IP and clientData.MAC.
 						minutes = tokenData.minutes;
 						result  = UnlockProfileFromToken(tokenData, clientData.IP, clientData.MAC);
-						if (result == -1) {
+						if (!result) {
 							ServeError(response, request);
 						} else {
 							ServeUnlocked(response, tokenData);
@@ -260,7 +260,7 @@ function ServeCaptive(response, request) {
 
 	switch (uri) { // Check what page was asked for, and act accordingly.
 		case '/code':
-			// If they visited http://192.168.1.222/code
+			// If they visited http://192.168.254.1/code
 			//                                     ^^^^^
 			ServeUnlocker(response, request);
 			// Serve the unlocker. /code is the page which receives the data from the form.
@@ -296,13 +296,13 @@ function HTTPListener(request, response) {
 	}); // Prevents browsers from caching the content.
 	// Ignore this for now.
 
-	if (host != '192.168.1.222') {
-		// If the user visited a website other than http://192.168.1.222
+	if (host != '192.168.254.1') {
+		// If the user visited a website other than http://192.168.254.1
 		ServeBlocked(response, request);
 		// Call the function ServeBlocked, and pass along the response and request objects.
 		// It serves a "blocked!" page
 	} else {
-		// Else (i.e. if they visited the website http://192.168.1.222)
+		// Else (i.e. if they visited the website http://192.168.254.1)
 		ServeCaptive(response, request);
 		// Call the function ServeCaptive, and pass along the response and request objects.
 		// It serves the appropriate page.
@@ -310,16 +310,16 @@ function HTTPListener(request, response) {
 }
 
 // Here is the first "real code"!
-/* This creates an HTTP server on port 80 on the IP 192.168.1.222.
+/* This creates an HTTP server on port 80 on the IP 192.168.254.1.
  * Note that it is equivalent to:
  *
  *     var something = http.createServer(HTTPListener);
- *     something.listen(80, "192.168.1.222");
+ *     something.listen(80, "192.168.254.1");
  *
  * but since we don't need the variable "something", we just concatenate the two functions together: http.createServer().listen().
  */
 
-http.createServer(HTTPListener).listen(80, "192.168.1.222", function (){
+http.createServer(HTTPListener).listen(80, "192.168.254.1", function (){
 	console.log("Captive portal running");
 });
 //                ^ See this? This means "the function HTTPListener()". Note that parameters aren't needed.
