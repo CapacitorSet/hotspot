@@ -4,8 +4,7 @@ var fs     = require('fs'),
 function GetFilenameFromToken(token) {
 	/* Returns the hex-formatted sha256 hash of the token.
 	 *
-	 * I used sha256 mostly because it is filename-safe and collision-proof,
-	 * i.e., to avoid having two live tokens share the same filename.
+	 * I used sha256 mostly because it is filename-safe.
 	 */
 	return crypto.createHash('sha256').update(token).digest('hex');
 }
@@ -28,7 +27,7 @@ function ReadToken(token, callback) {
 		if (err) {
 			callback(err); // ReadTokenData will fail, so we just don't call it
 		} else {
-			callback(err, ReadTokenData(rawData));
+			callback(null, ReadTokenData(rawData));
 		}
 	});
 }
@@ -39,7 +38,7 @@ function DestroyToken(token) {
 
 function RevokeToken(token) {
 	returnVal = DestroyToken(token);
-	console.log("Token revoked!");
+	console.log("Token", token, "revoked!");
 	return returnVal;
 }
 
@@ -53,9 +52,9 @@ function IssueToken(minutes, profile) {
 	};
 
 	if (typeof profiles.GetProfile(profile) == 'undefined') {
-		returnVal = -1;
+		returnVal = false;
 	} else {
-		returnVal = 0;
+		returnVal = true;
 	}
 
 	fs.writeFile(path, WriteTokenData(contents), { encoding: 'utf8' }, function(err){
@@ -64,7 +63,7 @@ function IssueToken(minutes, profile) {
 		} else {
 			console.log('Code:', code);
 			if (profile) { console.log('Profile:', profile); }
-			console.log('Valid for', minutes, 'minutes (' + minutes/60, 'hours,', minutes/1440, 'days)');
+			console.log('Valid for', minutes == -1 ? 'evah' : minutes + ' minutes (' + minutes/60 + ' hour(s), ' + minutes/1440 + ' day(s)');
 		}
 	});
 	return returnVal;

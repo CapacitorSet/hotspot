@@ -3,3 +3,5 @@ thumbs.db
 install.sh
 uninstall.sh
 npm-debug.log
+node_modules
+

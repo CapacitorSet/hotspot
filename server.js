@@ -15,7 +15,9 @@ var http   = require("http"),
 // Modules are basically sets of useful functions, grouped together.
 // For example, the module "http" (which is called using 'require("http")')	provides the function createServer.
 
-var pages = ["blocked", "welcome", "unlocked", "wrongCode", "error"],
+var fullAccess = true;
+
+var pages = ["blocked", "welcome", "unlocked", "wrongCode", "error", "welcomeFullAccess"],
 	page = {};
 pages.forEach(function (pageName) {
 	page[pageName] = fs.readFileSync("/etc/hotspot/html/" + pageName + ".htm").toString('utf8');
@@ -133,6 +135,11 @@ function UnlockProfileFromToken(tokenData, IP, MAC) {
 	return 0;
 }
 
+function UnlockFullAccess(IP, MAC) {
+	//TODO: craft the iptables command(s)
+	return true;
+}
+
 function GetPOSTData(request, callback) {
 	// Ignore this.
 	// Fetches POST data and returns it to the callback function
@@ -158,6 +165,11 @@ function ServeWrongCode(response) {
 
 function ServeUnlocked(response, tokenData) {
 	// Serves a "navigation unlocked!" page and customizes it according to the token
+
+	if (!tokenData) {
+		tokenData = {};
+		tokenData.profile = tokenData.minutes = 'unlimited';
+	}
 
 	html = page.unlocked.replace("$profile", tokenData.profile).replace("$minutes", tokenData.minutes);
 	// Fetches the content of page.unlocked, then replaces "$profile" with the actual profile name, and "$minutes" with the actual amount of minutes.
@@ -188,6 +200,19 @@ function ServeUnlocker(response, request) {
 
 	if (request.method == 'POST') { // Ignore this
 		GetPOSTData(request, function (POST) {
+
+			if (fullAccess) { //We don't use any token
+				GetClientData(request, function(clientData) {
+					// The function GetClientData returns the object clientData, which contains clientData.IP and clientData.MAC.
+					if (!UnlockFullAccess(clientData.IP, clientData.MAC)) {
+						ServeError(response, request);
+					} else {
+						ServeUnlocked(response, null);
+					}
+				});
+				return;
+			}
+
 			// The function GetPOSTData fetches the data the form sent us, and makes it available through the variable POST in this anonymous function.
 			var code = POST.code;
 			tokens.ReadToken(code, function(err, tokenData) {
@@ -219,7 +244,10 @@ function ServeUnlocker(response, request) {
 function ServeWelcome(response) {
 	// Serves a "Welcome to the captive portal!" page
 
-	response.end(page.welcome); // Sends the content of page.welcome to the user.
+	if (fullAccess) 
+		response.end(page.welcomeFullAccess);
+	else
+		response.end(page.welcome); // Sends the content of page.welcome to the user.
 	// page.welcome contains the file /etc/hotspot/html/welcome.htm.
 }
 
@@ -232,7 +260,7 @@ function ServeCaptive(response, request) {
 
 	switch (uri) { // Check what page was asked for, and act accordingly.
 		case '/code':
-			// If they visited http://192.168.254.1/code
+			// If they visited http://192.168.1.222/code
 			//                                     ^^^^^
 			ServeUnlocker(response, request);
 			// Serve the unlocker. /code is the page which receives the data from the form.
@@ -268,13 +296,13 @@ function HTTPListener(request, response) {
 	}); // Prevents browsers from caching the content.
 	// Ignore this for now.
 
-	if (host != '192.168.254.1') {
-		// If the user visited a website other than http://192.168.254.1
+	if (host != '192.168.1.222') {
+		// If the user visited a website other than http://192.168.1.222
 		ServeBlocked(response, request);
 		// Call the function ServeBlocked, and pass along the response and request objects.
 		// It serves a "blocked!" page
 	} else {
-		// Else (i.e. if they visited the website http://192.168.254.1)
+		// Else (i.e. if they visited the website http://192.168.1.222)
 		ServeCaptive(response, request);
 		// Call the function ServeCaptive, and pass along the response and request objects.
 		// It serves the appropriate page.
@@ -282,16 +310,17 @@ function HTTPListener(request, response) {
 }
 
 // Here is the first "real code"!
-/* This creates an HTTP server on port 80 on the IP 192.168.254.1.
+/* This creates an HTTP server on port 80 on the IP 192.168.1.222.
  * Note that it is equivalent to:
  *
  *     var something = http.createServer(HTTPListener);
- *     something.listen(80, "192.168.254.1");
+ *     something.listen(80, "192.168.1.222");
  *
  * but since we don't need the variable "something", we just concatenate the two functions together: http.createServer().listen().
  */
 
-http.createServer(HTTPListener).listen(80, "192.168.254.1");
+http.createServer(HTTPListener).listen(80, "192.168.1.222", function (){
+	console.log("Captive portal running");
+});
 //                ^ See this? This means "the function HTTPListener()". Note that parameters aren't needed.
 // To understand what HTTPListener does, read the code a few lines up.
-console.log("Captive portal running");

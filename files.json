@@ -4,7 +4,8 @@
 		"dnsmasq",
 		"hostapd",
 		"conntrack",
-		"nodejs"
+		"iw",
+		"wireless-tools"
 	],
 	"comments": [
 		"Don't forget the trailing slash after directory names!",
@@ -25,11 +26,12 @@
 			"tokens.js"
 		],
 		"/etc/hotspot/html/": [
-			"blocked.htm",
-			"error.htm",
-			"unlocked.htm",
-			"welcome.htm",
-			"wrongCode.htm"
+			"html/blocked.htm",
+			"html/error.htm",
+			"html/unlocked.htm",
+			"html/welcome.htm",
+			"html/wrongCode.htm",
+			"html/welcomeFullAccess.htm"
 		],
 		"/etc/hotspot/tokens/": []
 	}

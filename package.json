@@ -1,0 +1,22 @@
+{
+  "name": "hotspot",
+  "version": "1.0.0",
+  "description": "[Untitled] - a lightweight hotspot+captive solution =================================================",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/UMP/hotspot.git"
+  },
+  "author": "afilini, CapacitorSet",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/UMP/hotspot#readme",
+  "dependencies": {
+    "path": "^0.11.14",
+    "querystring": "^0.2.0",
+    "url": "^0.10.3"
+  }
+}
