@@ -5,7 +5,9 @@
 		"hostapd",
 		"conntrack",
 		"iw",
-		"wireless-tools"
+		"wireless-tools",
+		"iptables",
+		"firmware-ralink"
 	],
 	"comments": [
 		"Don't forget the trailing slash after directory names!",
@@ -25,7 +27,7 @@
 			"profiles.js",
 			"tokens.js"
 		],
-		"/etc/hotspot/html/": [
+		"/etc/hotspot/": [
 			"html/blocked.htm",
 			"html/error.htm",
 			"html/unlocked.htm",
