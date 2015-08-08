@@ -278,7 +278,7 @@ function ServeBlocked(response, request) {
 
 	console.log('Intercettata richiesta a ' + request.headers.host);
 	if (fullAccess) {
-		response.writeHead(302, {'Location: http://192.168.254.1'});
+		response.writeHead(302, {'Location': 'http://192.168.254.1'});
 		response.end();
 	} else {
 		response.end(page.blocked); // Sends the content of page.blocked to the user.
