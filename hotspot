@@ -237,12 +237,20 @@ iptables -t nat -A PREROUTING -p tcp -m mark --mark 99 -j DNAT --to-destination 
 echo "iptables -t nat -A POSTROUTING -o \"$INTERFACE_NET\" -j MASQUERADE 2>&1 | show_debug" | show_debug
 iptables -t nat -A POSTROUTING -o "$INTERFACE_NET" -j MASQUERADE 2>&1 | show_debug
 
-#####################################################
 # Whitelist
-# INSERT WHITELIST HERE - DO NOT REPLACE THIS LINE IF YOU DON'T KNOW WHAT YOU'RE DOING
+iptables -I internet 1 -t mangle -p tcp -d wikipedia.org --dport 80 -j RETURN
+iptables -I internet 1 -t mangle -p tcp -d wikipedia.org --dport 443 -j RETURN
+iptables -I internet 1 -t mangle -p tcp -d 192.168.254.1 -j RETURN
+
 # Blacklist
-# INSERT BLACKLIST HERE - DO NOT REPLACE THIS LINE IF YOU DON'T KNOW WHAT YOU'RE DOING
-#####################################################
+iptables -I internet 1 -t mangle -p tcp -d ad.doubleclick.net -j DROP
+iptables -I internet 1 -t mangle -p tcp -d media.fastclick.net -j DROP
+iptables -I internet 1 -t mangle -p tcp -d cdn.fastclick.net -j DROP
+iptables -I internet 1 -t mangle -p tcp -d google-analytics.com -j DROP
+iptables -I internet 1 -t mangle -p tcp -d www.google-analytics.com -j DROP
+iptables -I internet 1 -t mangle -p tcp -d tpc.googlesyndication.com -j DROP
+iptables -I internet 1 -t mangle -p tcp -d pagead2.googlesyndication.com -j DROP
+iptables -I internet 1 -t mangle -p tcp -d googleads.g.doubleclick.net -j DROP
 
 # Run access point daemon
 if [[ $(hostapd --help 2>&1 | grep "\-f") ]]; then

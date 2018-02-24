@@ -8,8 +8,6 @@ var http   = require("http"),
 	url    = require("url"),
 	path   = require("path"),
 	fs     = require("fs"),
-	tokens = require("/etc/hotspot/lib/tokens.js"),
-	profiles = require("/etc/hotspot/lib/profiles.js"),
 	qs     = require("querystring");
 // This loads a few required modules.
 // Modules are basically sets of useful functions, grouped together.
@@ -114,29 +112,9 @@ function UnlockItem(item, IP, MAC, minutes) {
 	}
 }
 
-function UnlockProfile(profile, IP, MAC, minutes) {
-	// Unlocks a profile
-
-	profile.forEach(function (item) {
-		UnlockItem(item, IP, MAC, minutes);
-	});
-	// Since a profile is an array of items, we loop through this array and unlock each item.
-}
-
-function UnlockProfileFromToken(tokenData, IP, MAC) {
-	// Unlocks a profile according to the token data given
-
-	profile = profiles.GetProfile(tokenData.profile);
-	if (typeof profile == 'undefined') {
-		return false;
-	}
-	// Fetches profile data using profiles.GetProfile
-	UnlockProfile(profile, IP, MAC, tokenData.minutes);
-	return true;
-}
-
 function UnlockFullAccess(IP, MAC) {
 	//TODO: craft the iptables command(s)
+	exec(CraftIptablesUnlocker({}, MAC), true);
 	return true;
 }
 
@@ -163,16 +141,11 @@ function ServeWrongCode(response) {
 	response.end(page.wrongCode);
 }
 
-function ServeUnlocked(response, tokenData) {
+function ServeUnlocked(response) {
 	// Serves a "navigation unlocked!" page and customizes it according to the token
 
-	if (!tokenData) {
-		tokenData = {};
-		tokenData.profile = tokenData.minutes = 'unlimited';
-	}
-
-	html = page.unlocked.replace("$profile", tokenData.profile).replace("$minutes", tokenData.minutes);
 	// Fetches the content of page.unlocked, then replaces "$profile" with the actual profile name, and "$minutes" with the actual amount of minutes.
+	var html = page.unlocked;
 	response.end(html);
 	// Then, it shows it to the user.
 }
@@ -201,40 +174,15 @@ function ServeUnlocker(response, request) {
 	if (request.method == 'POST') { // Ignore this
 		GetPOSTData(request, function (POST) {
 
-			if (fullAccess) { //We don't use any token
-				GetClientData(request, function(clientData) {
-					// The function GetClientData returns the object clientData, which contains clientData.IP and clientData.MAC.
-					if (!UnlockFullAccess(clientData.IP, clientData.MAC)) {
-						ServeError(response, request);
-					} else {
-						ServeUnlocked(response, null);
-					}
-				});
-				return;
-			}
-
-			// The function GetPOSTData fetches the data the form sent us, and makes it available through the variable POST in this anonymous function.
-			var code = POST.code;
-			tokens.ReadToken(code, function(err, tokenData) {
-				// We provide "code", and the function ReadToken (from the library "/etc/hotspot/lib/tokens.js", see header) returns us either an error as the first parameter, or the token data as the second parameter.
-				if (err) {
-					// If the function provided err, i.e. if an error was met
-					ServeWrongCode(response);
+			GetClientData(request, function(clientData) {
+				// The function GetClientData returns the object clientData, which contains clientData.IP and clientData.MAC.
+				if (!UnlockFullAccess(clientData.IP, clientData.MAC)) {
+					ServeError(response, request);
 				} else {
-					// If the function did NOT provide err, meaning no error was met
-					tokens.DestroyToken(code);
-					GetClientData(request, function(clientData) {
-						// The function GetClientData returns the object clientData, which contains clientData.IP and clientData.MAC.
-						minutes = tokenData.minutes;
-						result  = UnlockProfileFromToken(tokenData, clientData.IP, clientData.MAC);
-						if (!result) {
-							ServeError(response, request);
-						} else {
-							ServeUnlocked(response, tokenData);
-						}
-					});
+					ServeUnlocked(response, null);
 				}
 			});
+			return;
 		})
 	} else {
 		ServeError(response);
@@ -244,11 +192,7 @@ function ServeUnlocker(response, request) {
 function ServeWelcome(response) {
 	// Serves a "Welcome to the captive portal!" page
 
-	if (fullAccess) 
-		response.end(page.welcomeFullAccess);
-	else
-		response.end(page.welcome); // Sends the content of page.welcome to the user.
-	// page.welcome contains the file /etc/hotspot/html/welcome.htm.
+	response.end(fs.readFileSync("/home/jules/codice/hotspot/html/welcomeFullAccess.html", 'utf8'));
 }
 
 function ServeCaptive(response, request) {
@@ -260,12 +204,28 @@ function ServeCaptive(response, request) {
 
 	switch (uri) { // Check what page was asked for, and act accordingly.
 		case '/code':
+			response.writeHead(200, {
+				"Content-Type": "text/html",
+				"Cache-Control": "no-cache, no-store, must-revalidate",
+				"Pragma": "no-cache",
+				"Expires": 0
+			}); // Prevents browsers from caching the content.
 			// If they visited http://192.168.254.1/code
 			//                                     ^^^^^
 			ServeUnlocker(response, request);
 			// Serve the unlocker. /code is the page which receives the data from the form.
 			break;
+		case "/facebook.png":
+			response.writeHead(200, {
+				"Content-Type": "image/png",
+				"Cache-Control": "no-cache, no-store, must-revalidate",
+				"Pragma": "no-cache",
+				"Expires": 0
+			}); // Prevents browsers from caching the content.
+			response.end(fs.readFileSync("/home/jules/codice/hotspot/facebook.png", "utf8"));
+			break;
 		default:
+			console.log("Unknown URI:", uri);
 			// If they visited any other page
 			ServeWelcome(response);
 			// Serve a "welcome!" page with a form which sends data to /page
@@ -277,14 +237,8 @@ function ServeBlocked(response, request) {
 	// Serves a "this page is blocked!" page
 
 	console.log('Intercettata richiesta a ' + request.headers.host);
-	if (fullAccess) {
-		response.writeHead(302, {'Location': 'http://192.168.254.1'});
-		response.end();
-	} else {
-		response.end(page.blocked); // Sends the content of page.blocked to the user.
-	}
-	// Remember what page.blocked is?
-	// We wrote it at the top of the file: it contains the file /etc/hotspot/html/blocked.htm.
+	response.writeHead(302, {'Location': 'http://192.168.254.1'});
+	response.end();
 }
 
 function HTTPListener(request, response) {
@@ -293,15 +247,15 @@ function HTTPListener(request, response) {
 
 	var host = request.headers.host; // Ignore this
 
-	response.writeHead(200, {
-		"Content-Type": "text/html",
-		"Cache-Control": "no-cache, no-store, must-revalidate",
-		"Pragma": "no-cache",
-		"Expires": 0
-	}); // Prevents browsers from caching the content.
 	// Ignore this for now.
 
-	if (host != '192.168.254.1') {
+	if (host/* != '192.168.254.1'*/ == 0) {
+		response.writeHead(200, {
+			"Content-Type": "text/html",
+			"Cache-Control": "no-cache, no-store, must-revalidate",
+			"Pragma": "no-cache",
+			"Expires": 0
+		}); // Prevents browsers from caching the content.
 		// If the user visited a website other than http://192.168.254.1
 		ServeBlocked(response, request);
 		// Call the function ServeBlocked, and pass along the response and request objects.
@@ -324,7 +278,7 @@ function HTTPListener(request, response) {
  * but since we don't need the variable "something", we just concatenate the two functions together: http.createServer().listen().
  */
 
-http.createServer(HTTPListener).listen(80, "192.168.254.1", function (){
+http.createServer(HTTPListener).listen(8081, function (){
 	console.log("Captive portal running");
 });
 //                ^ See this? This means "the function HTTPListener()". Note that parameters aren't needed.
